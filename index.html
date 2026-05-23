@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Woorden Ontwarren – Vind Nederlandse Woorden | WordUnscrambler.nl</title>
+<meta name="description" content="Ontwar je letters en vind direct alle mogelijke Nederlandse woorden. Gratis tool voor Scrabble, Wordfeud en kruiswoordpuzzels.">
+<meta name="keywords" content="woorden ontwarren, woorden met letters, anagram Nederlands, scrabble hulp, woorden zoeken">
+<link rel="canonical" href="https://wordunscrambler.nl/">
+<style>
+  :root {
+    --primary: #ae1c28;
+    --primary-dark: #7d1420;
+    --accent: #21468b;
+    --bg: #f5f7fa;
+    --card: #ffffff;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --success: #16a34a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); }
+  header { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%); color: white; padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+  header h1 { font-size: 1.5rem; font-weight: 700; }
+  header span { font-size: 0.85rem; opacity: 0.75; }
+  .hero { background: linear-gradient(135deg, var(--primary) 0%, #c0392b 100%); color: white; padding: 3rem 1.5rem 4rem; text-align: center; }
+  .hero h2 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.75rem; line-height: 1.2; }
+  .hero p { font-size: 1.1rem; opacity: 0.9; max-width: 520px; margin: 0 auto 2rem; }
+  .search-box { background: white; border-radius: 16px; padding: 1.5rem; max-width: 600px; margin: 0 auto; box-shadow: 0 8px 32px rgba(0,0,0,0.15); }
+  .input-row { display: flex; gap: 0.75rem; margin-bottom: 0.75rem; }
+  .input-row input { flex: 1; padding: 0.9rem 1.2rem; border: 2px solid var(--border); border-radius: 10px; font-size: 1.2rem; letter-spacing: 0.1em; text-transform: uppercase; outline: none; transition: border-color 0.2s; color: var(--text); }
+  .input-row input:focus { border-color: var(--primary); }
+  .input-row input::placeholder { text-transform: none; letter-spacing: 0; color: #aaa; font-size: 1rem; }
+  .btn-primary { padding: 0.9rem 1.8rem; background: var(--primary); color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.1s; white-space: nowrap; }
+  .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+  .options-row { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+  .options-row label { font-size: 0.85rem; color: var(--muted); display: flex; align-items: center; gap: 0.4rem; cursor: pointer; }
+  .options-row select { padding: 0.4rem 0.6rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem; }
+  .filters-row { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border); }
+  .filters-row label { font-size: 0.85rem; color: var(--muted); display: flex; align-items: center; gap: 0.4rem; }
+  .filter-input { width: 65px; padding: 0.4rem 0.6rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .filter-input:focus { outline: none; border-color: var(--primary); }
+  main { max-width: 900px; margin: -2rem auto 0; padding: 0 1.5rem 4rem; position: relative; z-index: 1; }
+  #results-area { display: none; }
+  .results-header { background: var(--card); border-radius: 12px; padding: 1.2rem 1.5rem; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); display: flex; align-items: center; justify-content: space-between; }
+  .results-header h3 { font-size: 1.1rem; }
+  .results-header span { font-size: 0.9rem; color: var(--muted); }
+  .length-tabs { background: var(--card); border-radius: 12px; padding: 1rem 1.5rem; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow-x: auto; white-space: nowrap; }
+  .tab-btn { display: inline-block; padding: 0.4rem 1rem; margin-right: 0.4rem; border: 2px solid var(--border); border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; background: white; color: var(--muted); transition: all 0.15s; }
+  .tab-btn.active, .tab-btn:hover { background: var(--primary); border-color: var(--primary); color: white; }
+  .words-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.6rem; }
+  .word-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.8rem; font-size: 0.95rem; font-weight: 600; text-align: center; cursor: pointer; transition: all 0.15s; }
+  .word-card:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(174,28,40,0.15); }
+  .word-card .pts { font-size: 0.7rem; color: var(--muted); font-weight: 400; }
+  .section-title { font-size: 1rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin: 1.5rem 0 0.75rem; padding-left: 0.25rem; }
+  .no-results { background: var(--card); border-radius: 12px; padding: 3rem; text-align: center; color: var(--muted); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .no-results h3 { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--text); }
+  .info-section { background: var(--card); border-radius: 12px; padding: 2rem; margin-top: 3rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .info-section h2 { font-size: 1.4rem; margin-bottom: 1rem; color: var(--primary); }
+  .info-section p { color: var(--muted); line-height: 1.7; margin-bottom: 0.75rem; }
+  .faq-item { margin-bottom: 1.5rem; }
+  .faq-item h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+  .faq-item p { font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
+  .copy-toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--success); color: white; padding: 0.7rem 1.5rem; border-radius: 30px; font-weight: 600; transition: transform 0.3s; z-index: 100; }
+  .copy-toast.show { transform: translateX(-50%) translateY(0); }
+  footer { background: var(--primary-dark); color: rgba(255,255,255,0.7); text-align: center; padding: 2rem; font-size: 0.85rem; }
+  footer a { color: rgba(255,255,255,0.9); text-decoration: none; }
+  @media(max-width:600px) { .hero h2 { font-size: 1.6rem; } .input-row { flex-direction: column; } .words-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🔤 WordUnscrambler<span style="color:var(--accent)">.nl</span></h1>
+  <span>Woorden ontwarren in het Nederlands</span>
+</header>
+
+<div class="hero">
+  <h2>Ontwar Letters in het Nederlands</h2>
+  <p>Voer je door elkaar gehusselde letters in en vind direct alle mogelijke Nederlandse woorden.</p>
+  <div class="search-box">
+    <div class="input-row">
+      <input type="text" id="letterInput" placeholder="bijv. EELTS → STEEN" maxlength="15" autocomplete="off" spellcheck="false">
+      <button class="btn-primary" onclick="unscramble()">Zoeken</button>
+    </div>
+    <div class="options-row">
+      <label>Lengte: <select id="lengthFilter" onchange="filterByLength()">
+        <option value="all">Alle</option>
+      </select></label>
+      <label><input type="checkbox" id="exactOnly"> Alleen exacte lengte</label>
+      <label style="margin-left:auto; color: var(--primary); font-weight:600;" id="wordCount"></label>
+    </div>
+    <div class="filters-row">
+      <label>Begint met: <input type="text" id="startsWith" class="filter-input" maxlength="3" placeholder="A…" autocomplete="off"></label>
+      <label>Eindigt op: <input type="text" id="endsWith" class="filter-input" maxlength="3" placeholder="…N" autocomplete="off"></label>
+      <label>Bevat: <input type="text" id="contains" class="filter-input" maxlength="3" placeholder="EE" autocomplete="off"></label>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div id="results-area">
+    <div class="results-header">
+      <h3 id="results-title">Resultaten</h3>
+      <span id="results-meta"></span>
+    </div>
+    <div class="length-tabs" id="length-tabs"></div>
+    <div id="words-container"></div>
+  </div>
+  <div id="no-results" style="display:none" class="no-results">
+    <h3>Geen woorden gevonden</h3>
+    <p>Probeer andere letters of controleer de spelling.</p>
+  </div>
+
+  <div class="info-section">
+    <h2>Hoe werkt de woordenontwarder?</h2>
+    <p>Ons gratis hulpmiddel doorzoekt meer dan 80.000 Nederlandse woorden in milliseconden. Voer je door elkaar gehusselde letters in — het algoritme test alle mogelijke combinaties en toont alle geldige woorden, gesorteerd op lengte en Scrabble-score.</p>
+    <p>Perfect voor <strong>Scrabble</strong>, <strong>Wordfeud</strong>, <strong>kruiswoordpuzzels</strong>, <strong>anagrammen</strong> en alle andere woordspelletjes in het Nederlands.</p>
+    <div class="faq-item" style="margin-top:1.5rem">
+      <h3>Waarvoor dient de woordenontwarder?</h3>
+      <p>Hij helpt je anagrammen op te lossen, woorden te vinden bij Scrabble, kruiswoordpuzzels in te vullen en al je favoriete woordspelletjes te winnen.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Worden accenten ondersteund?</h3>
+      <p>Ja! Je kunt é, è, ë, ï, ö, ü, ij, aa, ee, oo, uu direct invoeren of de basisletter zonder accent gebruiken.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Hoeveel woorden staan er in het woordenboek?</h3>
+      <p>Ons Nederlandse woordenboek bevat meer dan 80.000 veelgebruikte woorden uit het standaard Nederlands.</p>
+    </div>
+  </div>
+</main>
+
+<div class="copy-toast" id="toast">✓ Gekopieerd!</div>
+
+<footer>
+  <p>© 2026 WordUnscrambler.nl – Woorden ontwarren in het Nederlands</p>
+  <p style="margin-top:0.5rem">
+    <a href="https://wordunscrambler.de">🇩🇪 Deutsch</a> &nbsp;|&nbsp;
+    <a href="https://wordunscrambler.fr">🇫🇷 Français</a> &nbsp;|&nbsp;
+    <a href="https://wordunscrambler.it">🇮🇹 Italiano</a> &nbsp;|&nbsp;
+    <a href="https://wordunscrambler.be">🇧🇪 België</a> &nbsp;|&nbsp;
+    <a href="https://wordunscrambler.dk">🇩🇰 Dansk</a>
+  </p>
+  <p style="margin-top:0.5rem;font-size:0.8rem"><a href="/privacy.html">Privacybeleid</a></p>
+</footer>
+
+<script>
+const WORDS = `aap aan aard aarde aas adem adres af aga age aged agen ager ages
+aged aken aker akes aki akke als alt alts alum alve amen amok amp amps
+ander anders ander angel angst anijs anis anno ante ants apen apje apot
+arm arme armen armer arms arnd arob arom aron arts asem aten atlas atom
+avond avonds baai baan baars bad bade bagen bak baken bal balk balken
+balk band bange bar bare baren barm bars bas base baten baten bed bede
+been beer bees beet began begen begie bek bel beld bele beld belt bend
+bende bes best bete bier bij bile bile bill binds bink bint bla blab blad
+bladen bladig blank bles blies blind blink blob bloed bloem bloemen bloop
+boot bodem boel boem boen boer boes bof bol bols bom bon bond bondel
+boog bool boon boor bop bord borg bors bos bosch boss bot botje both bots
+bout braak braam brabs brag brak bram brand bras brat bravo bred bref bren
+bres bret brie brim brit brol brom bron brood brug brui bruin brul brus
+bud bui buis bul bult bun bung buren burk bus buts cent dag dale dals
+dans dant dats deden deels deen deet delen delf deli dels dem den dent
+deps ders deur dicht dier dijk ding dins dip dit does dom domme don
+dong dons door dop dorp dorst dos dove dover draad draf druk drui drum
+dun dune duren dut eend ei eik elf ems end ene ens ente entje enz
+eras erg ers esk eten euro excl faam faas fad fads fag fake fam fan fand
+fee feer fei fen fend fer fers fes fien fijn fin fiets film fles foef
+foei foel foes fok foks fon fond fonds font foo foor foos for ford fors
+fort frm frut fuik fun fur gaap gaan gaat gaar gab gag gel geld gele
+galen galm galt game gang gans gard gas gast gat gave geb gees geel
+geen geest gel geld gem geur gif girl gis glad glas gleis glei glib
+glob gloed glom glori god goei goed goeie goer goft gold golf gols gom
+gond gons goor goot gors graaf graag graan grab grad grag gram grap
+gras grens grep gres grib grijs grip groen grond groep groot gros grot
+grut haar half hall hals ham hand hang hard hart heel heels heen heer
+hees heet hek heid helm hert hij hoek hoer hoek hoed hoe hol holk hond
+hons hood hoog hooi hoos hop hops hort houd hout huid huil huis hulp
+hun hut ijle ikte ijs ilk ima ims ine inne inns int jaan jas jat jen
+jet jij jong jonk jool joop joop jord kaal kaan kaars kaas kal kalf
+kam kamp kand kane kant kap kar kart kas keer kei kel kern kest ket
+keur kiel kier kies kiet kijk kijn kind kist klap klas klei kleur knie
+knip knol knop koe koek koei koel koen koer koge kolk kom kond koni
+kont konk kool koop koor koos kop kord korf kors kost kou koud kousen
+kraal krab krad kraken kramp krap krat kread krei kren krew kriel krijs
+krijs krim kring krip krol krom kroon krop krot krul kug kuil kuit kun
+lamp land lang last laten lauw leed leeg leem leen leer lees leed leid
+lende lenen lens lente lep les leve lied lief lies lijn lijst linde lip
+list lits lob lok lom lood look loon loop loos lop los lost lot loup
+lout lubs lucht lude luis luit maag maan maar made maai maat macht mal
+mam man mane mang mank mant mare mars mass mast meer melk men mens merd
+mes met mier mijn min ming mint mod moel moer moes mol mon mond mond
+muur nacht naam nap nas nat neem neer neid neiging nep net neus neus
+niet nij nip nis nood noot nor nos nota not nul nut ooit ook oor oord
+paal pad pak pan pas pat pede pen pend pers pet plak plan plat plek plop
+pond pos post prak prat prei prins prob prod prol prom prop pros prot
+prul pub put raad raam rand raps reke regen reis rem rend ries ring riep
+rijs rip rit rob rod rof rol rook room roos root ros rot rug ruis rust
+sap sas sat saus school schep schil schip sier sijn sins sint slag slaap
+slap sley slib slob slot slub smal snap snee snel snis snoep soep sol
+som sons sop sort spans spare spar spek spin spit spoed spoor sport spot
+staak staal staan staat staf sted stek stem step ster stip stoel stof
+stom stop storm straat strak stro strom stroop taal taak tak tal tam
+tang tant tap tars tat tent test thee thuis tijd tien ties tip tis tit
+ton tond tong tool toom toor top torn tors tot touw traag tram trap trek
+tred tref tren tros trot troep trein turn tuig tuin twee uren vak vat vel
+veld vene ver veren vet view vijl vis vlag vlak vlas vlee vles vlieg
+vloed vlok voel voet volk voor vork vorm vosp vos vree vroeg vuur waar
+was water weg weil wein wiek wind wijn wijs wink wip wis wolk won wond
+wors zaad zak zand zee zeil zer zij zijde zin zit zon zong zoet zout
+zuur zone`;
+
+const rawWords = WORDS.toLowerCase().replace(/[^a-zàäèëéïijöüù\s]/g,'').split(/\s+/).filter(w=>w.length>=2);
+const WORD_SET = [...new Set(rawWords)];
+
+const SCORES = {a:1,b:3,c:5,d:2,e:1,f:4,g:3,h:4,i:1,j:4,k:3,l:3,m:3,n:1,o:1,p:3,q:10,r:2,s:2,t:2,u:4,v:4,w:5,x:8,y:8,z:4};
+
+function letterScore(word){ return [...word].reduce((s,c)=>s+(SCORES[c]||0),0); }
+function normalize(s){ return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/ij/g,'y'); }
+
+function canMake(word, letters) {
+  const avail = {};
+  for(const c of letters) avail[c]=(avail[c]||0)+1;
+  for(const c of word){
+    const n=normalize(c);
+    if(avail[n]){avail[n]--;continue;}
+    if(avail[c]){avail[c]--;continue;}
+    return false;
+  }
+  return true;
+}
+
+let allResults = {};
+
+function unscramble(){
+  const raw=document.getElementById('letterInput').value.toLowerCase().trim();
+  const letters=normalize(raw).replace(/[^a-z]/g,'');
+  if(!letters) return;
+  const exactOnly=document.getElementById('exactOnly').checked;
+  const sw=normalize(document.getElementById('startsWith').value).trim();
+  const ew=normalize(document.getElementById('endsWith').value).trim();
+  const cw=normalize(document.getElementById('contains').value).trim();
+  const found=WORD_SET.filter(w=>{
+    if(exactOnly && normalize(w).length!==letters.length) return false;
+    const wn=normalize(w);
+    if(sw && !wn.startsWith(sw)) return false;
+    if(ew && !wn.endsWith(ew)) return false;
+    if(cw && !wn.includes(cw)) return false;
+    return canMake(w,letters);
+  }).sort((a,b)=>b.length-a.length||letterScore(b)-letterScore(a));
+
+  allResults={};
+  for(const w of found){const k=normalize(w).length;if(!allResults[k])allResults[k]=[];allResults[k].push(w);}
+  const lengths=Object.keys(allResults).map(Number).sort((a,b)=>b-a);
+  const lenFilter=document.getElementById('lengthFilter');
+  lenFilter.innerHTML='<option value="all">Alle</option>';
+  lengths.forEach(l=>{const o=document.createElement('option');o.value=l;o.textContent=`${l} letters`;lenFilter.appendChild(o);});
+  document.getElementById('wordCount').textContent=found.length?`${found.length} woorden`:'';
+  renderResults(found,raw,lengths);
+}
+
+function renderResults(found,letters,lengths){
+  const area=document.getElementById('results-area');
+  const noRes=document.getElementById('no-results');
+  if(!found.length){area.style.display='none';noRes.style.display='block';return;}
+  area.style.display='block';noRes.style.display='none';
+  document.getElementById('results-title').textContent=`Woorden van «${letters.toUpperCase()}»`;
+  document.getElementById('results-meta').textContent=`${found.length} woorden gevonden`;
+  const tabsEl=document.getElementById('length-tabs');
+  tabsEl.innerHTML='<span class="tab-btn active" onclick="switchTab(\'all\',this)">Alle</span>';
+  lengths.forEach(l=>{tabsEl.innerHTML+=`<span class="tab-btn" onclick="switchTab(${l},this)">${l} letters (${allResults[l].length})</span>`;});
+  renderWords(found);
+}
+
+function switchTab(len,el){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  const toShow=len==='all'?Object.values(allResults).flat():allResults[len]||[];
+  renderWords(toShow);
+}
+
+function renderWords(words){
+  const container=document.getElementById('words-container');
+  if(!words.length){container.innerHTML='';return;}
+  const byLen={};
+  for(const w of words){const k=normalize(w).length;if(!byLen[k])byLen[k]=[];byLen[k].push(w);}
+  const lens=Object.keys(byLen).map(Number).sort((a,b)=>b-a);
+  let html='';
+  for(const l of lens){
+    html+=`<div class="section-title">Woorden van ${l} letters (${byLen[l].length})</div><div class="words-grid">`;
+    for(const w of byLen[l]){html+=`<div class="word-card" onclick="copyWord('${w}')">${w.toUpperCase()}<br><span class="pts">${letterScore(w)} pt</span></div>`;}
+    html+='</div>';
+  }
+  container.innerHTML=html;
+}
+
+function filterByLength(){
+  const len=document.getElementById('lengthFilter').value;
+  const words=len==='all'?Object.values(allResults).flat():allResults[parseInt(len)]||[];
+  renderWords(words);
+}
+
+function copyWord(w){
+  navigator.clipboard?.writeText(w.toUpperCase()).catch(()=>{});
+  const t=document.getElementById('toast');
+  t.textContent=`✓ ${w.toUpperCase()} gekopieerd!`;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+document.getElementById('letterInput').addEventListener('keydown',e=>{if(e.key==='Enter')unscramble();});
+</script>
+</body>
+</html>
